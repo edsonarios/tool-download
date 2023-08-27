@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+  "name": "Capturador de URLs",
+  "version": "1.0",
+  "description": "Una extensión para capturar y descargar URLs de archivos .ts",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "downloads",
+    "<all_urls>"
+  ]
+}
+
+{
+  "manifest_version": 3,
+  "name": "Capturador de URLs",
+  "version": "1.0",
+  "description": "Una extensión para capturar y descargar URLs de archivos .ts",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "webRequest",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://embed-cloudfront.wistia.com/deliveries/*"
+    "https://mi_dominio/deliveries/*"
+  ]
+}
