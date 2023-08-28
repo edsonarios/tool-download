@@ -39,6 +39,13 @@ document.getElementById('download').addEventListener('click', function () {
     });
 });
 
+document.getElementById('send').addEventListener('click', function () {
+    chrome.storage.local.get('capturedUrls', (data) => {
+        const capturedUrls = data.capturedUrls || [];
+        sendUrlsToDownload(capturedUrls)
+    });
+});
+
 function forceDownload(url) {
     const a = document.createElement('a');
     a.href = url;
@@ -46,4 +53,17 @@ function forceDownload(url) {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+}
+
+function sendUrlsToDownload(UrlArray) {
+    fetch('http://localhost:3000/download/files', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ UrlArray })
+    })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch((error) => console.error('Error:', error));
 }

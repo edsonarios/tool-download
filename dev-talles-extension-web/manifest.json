@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Capturador de URLs",
+  "name": "URL Grabber",
   "version": "1.0",
-  "description": "Una extensión para capturar y descargar URLs de archivos .ts",
+  "description": "An extension to capture and download URLs from .ts files",
   "background": {
     "service_worker": "background.js"
   },

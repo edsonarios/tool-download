@@ -4,14 +4,14 @@ import glob
 import subprocess
 
 def get_segment_number(filename):
-    """Extraer el número del segmento del nombre del archivo."""
+    """Extract name file."""
     match = re.search(r'seg-(\d+)-', filename)
     if match:
         return int(match.group(1))
     return 0
 
 def generate_file_list(download_folder_path, working_folder_path):
-    """Generar el archivo mylist.txt para FFmpeg."""
+    """Generate file mylist.txt for ffmpeg."""
     ts_files = [f for f in os.listdir(download_folder_path) if f.endswith('.ts') and not f.endswith('(1).ts')]
     ts_files.sort(key=get_segment_number)
     file_list_content = "\n".join([f"file '{download_folder_path}{ts_file}'" for ts_file in ts_files])
@@ -21,7 +21,7 @@ def generate_file_list(download_folder_path, working_folder_path):
     return ts_files
 
 def concatenate_files(working_folder_path, name_file_output = 'output'):
-    """Utilizar FFmpeg para concatenar los archivos de video."""
+    """Execute ffmpeg."""
     ffmpeg_command = [
         "ffmpeg",
         "-f", "concat",
@@ -34,7 +34,7 @@ def concatenate_files(working_folder_path, name_file_output = 'output'):
     subprocess.run(ffmpeg_command)
 
 def delete_original_files(download_folder_path, ts_files):
-    """Eliminar los archivos .ts originales."""
+    """Delete file .ts originals."""
     for ts_file in ts_files:
         os.remove(os.path.join(download_folder_path, ts_file))
         # Eliminar también los duplicados si existen
@@ -43,20 +43,21 @@ def delete_original_files(download_folder_path, ts_files):
             os.remove(os.path.join(download_folder_path, duplicate_file))
 
 if __name__ == "__main__":
-    # Ruta a la carpeta donde se descargaron los archivos
-    download_folder_path = os.path.expanduser("~/Downloads/")
+    # Path to the folder where the files were downloaded
+    # download_folder_path = os.path.expanduser("~/Downloads/")
+    download_folder_path = os.path.expanduser("D:/Code/dev-talles-download/server/routes/videos/")
 
-    # Carpeta donde se realizarán todas las operaciones y donde se encuentra el script de Python
+    # Folder where all operations will be performed and where the Python script is located
     working_folder_path = "D:/getCourses/"
 
-    # Generar mylist.txt
+    # Generate mylist.txt
     ts_files = generate_file_list(download_folder_path, working_folder_path)
 
-    # Concatenar archivos usando FFmpeg
-    name_file_output = '5. introduccion-a-la-seccion'
+    # Concat files using ffmpeg
+    name_file_output = '6. inicio-de-proyecto-numero-criptografico-aleatorio-atmosferico'
     concatenate_files(working_folder_path, name_file_output)
 
-    # Eliminar archivos .ts originales
+    # Delete files .ts originals
     delete_original_files(download_folder_path, ts_files)
 
-    print(f"Se han concatenado y eliminado {len(ts_files)} archivos .ts")
+    print(f"Concatenated and removed {len(ts_files)} files .ts")
