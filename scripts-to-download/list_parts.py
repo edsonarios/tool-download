@@ -2,6 +2,7 @@ import os
 import re
 import glob
 import subprocess
+import sys
 
 def get_segment_number(filename):
     """Extract name file."""
@@ -53,9 +54,14 @@ if __name__ == "__main__":
     # Generate mylist.txt
     ts_files = generate_file_list(download_folder_path, working_folder_path)
 
+    if len(sys.argv) > 1:
+        nameVideo = sys.argv[1]
+    else:
+        nameVideo = "default"
+        
     # Concat files using ffmpeg
-    name_file_output = '6. inicio-de-proyecto-numero-criptografico-aleatorio-atmosferico'
-    concatenate_files(working_folder_path, name_file_output)
+    # name_file_output = '6. inicio-de-proyecto-numero-criptografico-aleatorio-atmosferico'
+    concatenate_files(working_folder_path, nameVideo)
 
     # Delete files .ts originals
     delete_original_files(download_folder_path, ts_files)

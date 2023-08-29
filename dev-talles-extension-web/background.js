@@ -14,7 +14,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         chrome.storage.local.get(['selectedDomain', 'currentTabUrl'], (data) => {
             const selectedDomain = data.selectedDomain;
             const urlObject2 = new URL(details.url);
-            console.log(urlObject2)
+            // console.log(urlObject2)
             if (details.initiator === selectedDomain && details.url.includes('videoproxy')) {
                 console.log(details)
                 const urlObject = new URL(details.url);
@@ -33,6 +33,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         chrome.storage.local.get(['proxyDomain', 'capturedUrls'], (data) => {
             const proxyDomain = data.proxyDomain;
             if (details.initiator === proxyDomain && details.url.endsWith('.ts')) {
+                console.log(details)
                 console.log(details.url)
                 const capturedUrls = data.capturedUrls || [];
                 capturedUrls.push(details.url);

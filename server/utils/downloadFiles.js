@@ -25,6 +25,19 @@ async function downloadFile (url, destinationFolder) {
     })
 }
 
+function formatVideoTitle (rawTitle) {
+    const cleanTitle = rawTitle.replace(/^\d+-/, '')
+
+    let words = cleanTitle.split('-')
+
+    words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+
+    const formattedTitle = words.join(' ')
+
+    return formattedTitle
+}
+
 module.exports = {
-    downloadFile
+    downloadFile,
+    formatVideoTitle
 }

@@ -39,12 +39,28 @@ document.getElementById('download').addEventListener('click', function () {
     });
 });
 
+// document.getElementById('send').addEventListener('click', function () {
+//     chrome.storage.local.get('capturedUrls', (data) => {
+//         const capturedUrls = data.capturedUrls || [];
+
+
+//         sendUrlsToDownload(nameVideo, capturedUrls)
+//     });
+// });
+
 document.getElementById('send').addEventListener('click', function () {
     chrome.storage.local.get('capturedUrls', (data) => {
         const capturedUrls = data.capturedUrls || [];
-        sendUrlsToDownload(capturedUrls)
+
+        chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+            const url = tabs[0].url;
+            const nameVideo = url.substring(url.lastIndexOf('/') + 1);
+
+            sendUrlsToDownload(nameVideo, capturedUrls);
+        });
     });
 });
+
 
 function forceDownload(url) {
     const a = document.createElement('a');
@@ -55,13 +71,17 @@ function forceDownload(url) {
     document.body.removeChild(a);
 }
 
-function sendUrlsToDownload(UrlArray) {
+function sendUrlsToDownload(nameVideo, UrlArray) {
+    const requestData = {
+        nameVideo: nameVideo,
+        UrlArray: UrlArray
+    };
     fetch('http://localhost:3000/download/files', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ UrlArray })
+        body: JSON.stringify({ requestData })
     })
         .then(response => response.json())
         .then(data => console.log(data))
