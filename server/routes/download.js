@@ -3,7 +3,7 @@ const app = express.Router()
 const path = require('path')
 const fs = require('node:fs')
 const { exec } = require('child_process')
-const { downloadFile, formatVideoTitle } = require('../utils/downloadFiles')
+const { formatVideoTitle, downloadAllFiles } = require('../utils/downloadFiles')
 
 app.get('/', (req, res) => {
     res.send('Download some part of video .ts')
@@ -11,31 +11,35 @@ app.get('/', (req, res) => {
 
 app.post('/files', async (req, res) => {
     const receivedUrls = req.body.requestData
-    const nameVideo = formatVideoTitle(receivedUrls.nameVideo)
+    const nameVideo = formatVideoTitle(receivedUrls.urlActualTab)
     const destinationFolder = path.join(__dirname, 'videos')
     if (!fs.existsSync(destinationFolder)) {
         fs.mkdirSync(destinationFolder)
     }
+    const firstUrl = receivedUrls.UrlArray[0]
+    const pattern = firstUrl.match(/(.*\/seg-)(\d+)(-v\d+-a\d+\.ts)/)
+    if (pattern && pattern.length === 4) {
+        const prefix = pattern[1]
+        const suffix = pattern[3]
 
-    const downloadPromises = receivedUrls.UrlArray.map(url => downloadFile(url, destinationFolder))
-
-    Promise.all(downloadPromises)
-        .then(() => {
-            // Execute script Python
-            exec(`python D:/Code/dev-talles-download/scripts-to-download/list_parts.py "${nameVideo}"`, (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`Error when execute script: ${error}`)
-                    return
-                }
-                console.log(`stdout: ${stdout}`)
-                console.error(`stderr: ${stderr}`)
+        downloadAllFiles(prefix, suffix, destinationFolder)
+            .then(() => {
+                exec(`python D:/Code/dev-talles-download/scripts-to-download/list_parts.py "${nameVideo}"`, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Error when execute script: ${error}`)
+                        return
+                    }
+                    console.log(`stdout: ${stdout}`)
+                    console.error(`stderr: ${stderr}`)
+                    console.log('Finished')
+                })
+                res.send('Files downloaded it and saved it, Script Executed')
             })
-            res.send('Files downloaded it and saved it, Script Executed')
-        })
-        .catch(error => {
-            console.error(`Error to file download: ${error}`)
-            res.status(500).send('Error to file download')
-        })
+            .catch(error => {
+                console.error(`Error during download: ${error}`)
+                res.status(500).send('Error to file download')
+            })
+    }
 })
 
 module.exports = app

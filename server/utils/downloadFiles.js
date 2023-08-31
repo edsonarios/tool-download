@@ -2,30 +2,52 @@ const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
 
-async function downloadFile (url, destinationFolder) {
-    const fileName = url.split('/').pop()
+async function downloadAllFiles (prefix, suffix, destinationFolder) {
+    let numberPartFile = 1
 
-    const response = await axios({
-        method: 'GET',
-        url,
-        responseType: 'stream'
-    })
+    while (true) {
+        const newUrl = `${prefix}${numberPartFile}${suffix}`
+        const success = await downloadFile(newUrl, destinationFolder)
 
-    const outputPath = path.join(destinationFolder, fileName)
-    const writer = fs.createWriteStream(outputPath)
+        if (!success) {
+            console.log(`Stopping download at segment ${numberPartFile}`)
+            break
+        }
 
-    response.data.pipe(writer)
-
-    return new Promise((resolve, reject) => {
-        writer.on('finish', () => {
-            console.log(`File ${fileName} downloaded successfully.`)
-            resolve()
-        })
-        writer.on('error', reject)
-    })
+        numberPartFile++
+    }
 }
 
-function formatVideoTitle (rawTitle) {
+async function downloadFile (url, destinationFolder) {
+    const fileName = url.split('/').pop()
+    try {
+        const response = await axios({
+            method: 'GET',
+            url,
+            responseType: 'stream'
+        })
+        const outputPath = path.join(destinationFolder, fileName)
+        const writer = fs.createWriteStream(outputPath)
+        response.data.pipe(writer)
+
+        return new Promise((resolve, reject) => {
+            writer.on('finish', () => {
+                console.log(`File ${fileName} downloaded successfully.`)
+                resolve(true)
+            })
+            writer.on('error', () => {
+                // eslint-disable-next-line prefer-promise-reject-errors
+                reject(false)
+            })
+        })
+    } catch (error) {
+        console.error(`Error downloading file: ${error}`)
+        return false
+    }
+}
+
+function formatVideoTitle (urlActualTab) {
+    const rawTitle = urlActualTab.substring(urlActualTab.lastIndexOf('/') + 1)
     const cleanTitle = rawTitle.replace(/^\d+-/, '')
 
     let words = cleanTitle.split('-')
@@ -38,6 +60,6 @@ function formatVideoTitle (rawTitle) {
 }
 
 module.exports = {
-    downloadFile,
-    formatVideoTitle
+    formatVideoTitle,
+    downloadAllFiles
 }

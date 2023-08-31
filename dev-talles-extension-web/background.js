@@ -13,8 +13,6 @@ chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
         chrome.storage.local.get(['selectedDomain', 'currentTabUrl'], (data) => {
             const selectedDomain = data.selectedDomain;
-            const urlObject2 = new URL(details.url);
-            // console.log(urlObject2)
             if (details.initiator === selectedDomain && details.url.includes('videoproxy')) {
                 console.log(details)
                 const urlObject = new URL(details.url);
@@ -54,9 +52,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         chrome.storage.local.get('selectedDomain', (data) => {
             const selectedDomain = data.selectedDomain;
             if (selectedDomain && new URL(tab.url).origin === selectedDomain) {
+                const actualTab = new URL(tab.url).href
+                chrome.storage.local.set({ 'actualTab': actualTab });
                 chrome.storage.local.remove('capturedUrls');
             }
         });
     }
 });
-

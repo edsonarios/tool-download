@@ -39,25 +39,11 @@ document.getElementById('download').addEventListener('click', function () {
     });
 });
 
-// document.getElementById('send').addEventListener('click', function () {
-//     chrome.storage.local.get('capturedUrls', (data) => {
-//         const capturedUrls = data.capturedUrls || [];
-
-
-//         sendUrlsToDownload(nameVideo, capturedUrls)
-//     });
-// });
-
 document.getElementById('send').addEventListener('click', function () {
-    chrome.storage.local.get('capturedUrls', (data) => {
+    chrome.storage.local.get(['capturedUrls', 'actualTab'], (data) => {
         const capturedUrls = data.capturedUrls || [];
-
-        chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-            const url = tabs[0].url;
-            const nameVideo = url.substring(url.lastIndexOf('/') + 1);
-
-            sendUrlsToDownload(nameVideo, capturedUrls);
-        });
+        const urlActualTab = data.actualTab
+        sendUrlsToDownload(urlActualTab, capturedUrls);
     });
 });
 
@@ -71,9 +57,9 @@ function forceDownload(url) {
     document.body.removeChild(a);
 }
 
-function sendUrlsToDownload(nameVideo, UrlArray) {
+function sendUrlsToDownload(urlActualTab, UrlArray) {
     const requestData = {
-        nameVideo: nameVideo,
+        urlActualTab: urlActualTab,
         UrlArray: UrlArray
     };
     fetch('http://localhost:3000/download/files', {
@@ -83,7 +69,13 @@ function sendUrlsToDownload(nameVideo, UrlArray) {
         },
         body: JSON.stringify({ requestData })
     })
-        .then(response => response.json())
+        .then(response => {
+            if (response.headers.get('content-type') === 'application/json') {
+                return response.json();
+            } else {
+                throw new Error('Not JSON');
+            }
+        })
         .then(data => console.log(data))
         .catch((error) => console.error('Error:', error));
 }
