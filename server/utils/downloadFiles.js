@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
+const pc = require('picocolors')
 
 async function downloadAllFiles (prefix, suffix, destinationFolder) {
     let numberPartFile = 1
@@ -10,7 +11,7 @@ async function downloadAllFiles (prefix, suffix, destinationFolder) {
         const success = await downloadFile(newUrl, destinationFolder)
 
         if (!success) {
-            console.log(`Stopping download at segment ${numberPartFile}`)
+            console.log(pc.green(`Stopping download at segment ${numberPartFile}`))
             break
         }
 

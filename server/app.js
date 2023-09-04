@@ -4,6 +4,7 @@ const port = process.env.PORT || 3000
 const download = require('./routes/download')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const pc = require('picocolors')
 
 app.use(cors())
 
@@ -15,5 +16,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Server on http://localhost:${port}`)
+    console.log(pc.green(`Server on http://localhost:${port}`))
 })
