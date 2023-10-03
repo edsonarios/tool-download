@@ -25,7 +25,7 @@ app.post('/files', async (req, res) => {
 
         downloadAllFiles(prefix, suffix, destinationFolder)
             .then(() => {
-                exec(`python D:/Code/dev-talles-download/scripts-to-download/list_parts.py "${nameVideo}"`, (error, stdout, stderr) => {
+                exec(`python D:/Code/tool-download/scripts-to-download/list_parts.py "${nameVideo}"`, (error, stdout, stderr) => {
                     if (error) {
                         console.error(`Error when execute script: ${error}`)
                         return

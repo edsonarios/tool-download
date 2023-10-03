@@ -5,7 +5,7 @@ const { downloadAllFiles } = require('../utils/downloadFiles')
 const pc = require('picocolors')
 
 function downloadFile (name, url) {
-    const destinationFolder = path.join('D:/Code/dev-talles-download/server/routes', 'videos')
+    const destinationFolder = path.join('D:/Code/tool-download/server/routes', 'videos')
     if (!fs.existsSync(destinationFolder)) {
         fs.mkdirSync(destinationFolder)
     }
@@ -17,7 +17,7 @@ function downloadFile (name, url) {
 
         downloadAllFiles(prefix, suffix, destinationFolder)
             .then(() => {
-                exec(`python D:/Code/dev-talles-download/scripts-to-download/list_parts.py "${name}"`, (error, stdout, stderr) => {
+                exec(`python D:/Code/tool-download/scripts-to-download/list_parts.py "${name}"`, (error, stdout, stderr) => {
                     if (error) {
                         console.error(`Error when execute script: ${error}`)
                         return

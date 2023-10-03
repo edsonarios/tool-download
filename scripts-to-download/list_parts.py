@@ -44,7 +44,7 @@ def delete_original_files(download_folder_path, ts_files):
     """Delete file .ts originals."""
     for ts_file in ts_files:
         os.remove(os.path.join(download_folder_path, ts_file))
-        # Eliminar también los duplicados si existen
+        # delete duplicates
         duplicate_file = ts_file.replace('.ts', ' (1).ts')
         if os.path.exists(os.path.join(download_folder_path, duplicate_file)):
             os.remove(os.path.join(download_folder_path, duplicate_file))
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     # Path to the folder where the files were downloaded
     # download_folder_path = os.path.expanduser("~/Downloads/")
     download_folder_path = os.path.expanduser(
-        "D:/Code/dev-talles-download/server/routes/videos/")
+        "D:/Code/tool-download/server/routes/videos/")
 
     # Folder where all operations will be performed and where the Python script is located
     working_folder_path = "D:/getCourses/"
